@@ -200,9 +200,9 @@ class AdminModel {
   }
   // và từ id của rạp và id của lịch chiếu phim từ api trên
   // ta lấy được danh sách thời gian chiếu phim của rạp đó 
-  static async Room_showtime(cinema_id, schedule_id) {
+  static async Room_showtime(cinema_id) {
     const [rooms_time] = await db.query(`
-                select	r.room_id,r.room_name,sch.schedule_start,sch.schedule_id
+                select	r.room_id,r.room_name,sch.schedule_start,sch.schedule_end,sch.schedule_id
         from schedule as sch 
         join 
           movies as m on m.movie_id=sch.movie_id
@@ -211,14 +211,15 @@ class AdminModel {
         join 
           cinemas as c on r.cinema_id = c.cinema_id
         where 
-      		c.cinema_id=? and sch.schedule_id=?`, [cinema_id, schedule_id]);
+      		c.cinema_id=? `, [cinema_id]);
     if (rooms_time.length === 0) return { status: 404, message: "Not found room !" }
     return { status: 200, message: rooms_time }
   }
   //  danh sach rap chieu khi chon rap chinh xac 
   static async Room_showtime_by_cinema(cinema_id, schedule_date, cinema_name) {
     const [rooms] = await db.query(`
-      select	c.cinema_id,c.cinema_name , sch.schedule_id
+      select	c.cinema_id,c.cinema_name , sch.schedule_id,sch.schedule_start,
+      sch.schedule_start, sch.schedule_end,r.room_id,r.room_name,sch.movie_id
         from schedule as sch 
         join 
           movies as m on m.movie_id=sch.movie_id

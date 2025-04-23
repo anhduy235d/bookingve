@@ -120,9 +120,9 @@ class AdminControllers {
     }
 
     async Room_showtime(req, res) {
-        const { cinema_id, schedule_id } = req.body;
-        if (!cinema_id || !schedule_id) return res.json({ status: 400, message: "Missing Required!" });
-        const rooms = await AdminModel.Room_showtime(cinema_id, schedule_id);
+        const { cinema_id } = req.body;
+        if (!cinema_id ) return res.json({ status: 400, message: "Missing Required!" });
+        const rooms = await AdminModel.Room_showtime(cinema_id);
         return res.json({ rooms });
     }
     // lay danh sach rap chieu phim theo mong muon
