@@ -7,15 +7,20 @@ class AdminModel {
   // Hàm lấy dữ liệu phim từ TMDb
   static async fetchMovies() {
     try {
-      const response = await axios.get(`${BASE_URL}/movie/now_playing`, {
+      const response = await axios.get('https://api.themoviedb.org/3/movie/now_playing', {
         params: {
-          api_key: API_KEY,
           language: 'vi-VN',
           page: 2,
+          region: 'VN',
         },
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYmZkNDdmNDVmNWM5MGMzMzc1NjMxZTJiZGMxNDJjNSIsIm5iZiI6MTc0MzY2NTAwNS4xMDMwMDAyLCJzdWIiOiI2N2VlMzc2ZDAzNTQwY2Y4ZTU2MjkzYTUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.x8qC4MJjiaiSU2nWoFZr7Ep01CVgpqKp6EkNpt2H1bk'
+        }
       });
 
       const movies = response.data.results;
+
       for (const movie of movies) {
         const {
           id,
@@ -23,53 +28,139 @@ class AdminModel {
           overview,
           genre_ids,
           release_date,
-          runtime,
           poster_path
         } = movie;
 
-        // Lấy trailer từ API TMDb
-        const trailerResponse = await axios.get(`${BASE_URL}/movie/${id}/videos`, {
-          params: {
-            api_key: API_KEY,
-            language: 'vi-VN',
-          },
+        // Lấy trailer
+        const trailerResponse = await axios.get(`https://api.themoviedb.org/3/movie/${id}/videos`, {
+          params: { language: 'vi-VN' },
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYmZkNDdmNDVmNWM5MGMzMzc1NjMxZTJiZGMxNDJjNSIsIm5iZiI6MTc0MzY2NTAwNS4xMDMwMDAyLCJzdWIiOiI2N2VlMzc2ZDAzNTQwY2Y4ZTU2MjkzYTUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.x8qC4MJjiaiSU2nWoFZr7Ep01CVgpqKp6EkNpt2H1bk'
+          }
         });
-        const trailer = trailerResponse.data.results.length > 0 ? trailerResponse.data.results[0].key : null;
 
-        // Lấy danh sách thể loại (genre) từ TMDb (nếu cần thiết)
+        const trailer = trailerResponse.data.results.length > 0
+          ? trailerResponse.data.results[0].key
+          : null;
+
+        // Genre dạng chuỗi
         const genres = genre_ids.join(', ');
 
+        // Thêm vào DB
         const query = `
-          INSERT INTO movies (movie_id, movie_name, movie_description, movie_trailer, movie_genres, movie_release, movie_length, movie_poster)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO movies (movie_id, movie_name, movie_description, movie_trailer, movie_genres, movie_release, movie_poster)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
           ON DUPLICATE KEY UPDATE
-          movie_name = VALUES(movie_name),
-          movie_description = VALUES(movie_description),
-          movie_trailer = VALUES(movie_trailer),
-          movie_genres = VALUES(movie_genres),
-          movie_release = VALUES(movie_release),
-          movie_length = VALUES(movie_length),
-          movie_poster = VALUES(movie_poster)
+            movie_name = VALUES(movie_name),
+            movie_description = VALUES(movie_description),
+            movie_trailer = VALUES(movie_trailer),
+            movie_genres = VALUES(movie_genres),
+            movie_release = VALUES(movie_release),
+            movie_poster = VALUES(movie_poster)
         `;
 
         const values = [
           id,
           title,
           overview,
-          trailer, // Thêm trailer nếu có
+          trailer,
           genres,
           release_date,
-          runtime ? `${Math.floor(runtime / 60)}:${runtime % 60}` : null,
-          `https://image.tmdb.org/t/p/w500${poster_path}`,
+          `https://image.tmdb.org/t/p/w500${poster_path}`
         ];
 
         await db.query(query, values);
       }
 
       return { status: 200, message: "Add_success!" }
+
     } catch (error) {
       return { status: 500, message: "Can't fetch: " + error.message }
     }
+  }
+  //lay danh sach phim sap chieu
+  static async fetchMoviesComming() {
+    try {
+      const response = await axios.get('https://api.themoviedb.org/3/movie/upcoming', {
+        params: {
+          language: 'vi-VN',
+          page: 1,
+          region: 'VN',
+        },
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYmZkNDdmNDVmNWM5MGMzMzc1NjMxZTJiZGMxNDJjNSIsIm5iZiI6MTc0MzY2NTAwNS4xMDMwMDAyLCJzdWIiOiI2N2VlMzc2ZDAzNTQwY2Y4ZTU2MjkzYTUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.x8qC4MJjiaiSU2nWoFZr7Ep01CVgpqKp6EkNpt2H1bk'
+        }
+      });
+
+      const movies = response.data.results;
+
+      // Lặp qua từng bộ phim
+      for (const movie of movies) {
+        const {
+          id,
+          title,
+          overview,
+          genre_ids,
+          release_date,
+          poster_path
+        } = movie;
+
+        // Lấy trailer của phim
+        const trailerResponse = await axios.get(`https://api.themoviedb.org/3/movie/${id}/videos`, {
+          params: { language: 'vi-VN' },
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYmZkNDdmNDVmNWM5MGMzMzc1NjMxZTJiZGMxNDJjNSIsIm5iZiI6MTc0MzY2NTAwNS4xMDMwMDAyLCJzdWIiOiI2N2VlMzc2ZDAzNTQwY2Y4ZTU2MjkzYTUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.x8qC4MJjiaiSU2nWoFZr7Ep01CVgpqKp6EkNpt2H1bk'
+          }
+        });
+
+        const trailer = trailerResponse.data.results.length > 0
+          ? trailerResponse.data.results[0].key
+          : null;
+
+        // Chuyển các genre ids thành chuỗi
+        const genres = genre_ids.join(', ');
+
+        // Query SQL để thêm dữ liệu phim vào cơ sở dữ liệu
+        const query = `
+          INSERT INTO movies (movie_id, movie_name, movie_description, movie_trailer, movie_genres, movie_release, movie_poster)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+            movie_name = VALUES(movie_name),
+            movie_description = VALUES(movie_description),
+            movie_trailer = VALUES(movie_trailer),
+            movie_genres = VALUES(movie_genres),
+            movie_release = VALUES(movie_release),
+            movie_poster = VALUES(movie_poster)
+        `;
+
+        const values = [
+          id,
+          title,
+          overview,
+          trailer,
+          genres,
+          release_date,
+          `https://image.tmdb.org/t/p/w500${poster_path}`  // Đảm bảo link ảnh có chất lượng tốt
+        ];
+
+        // Thực hiện truy vấn thêm hoặc cập nhật vào cơ sở dữ liệu
+        await db.query(query, values);
+      }
+
+      return { status: 200, message: "Add_success!" }
+
+    } catch (error) {
+      return { status: 500, message: "Can't fetch: " + error.message }
+    }
+  }
+  //Danh sach phim dang chieu
+  static async list_movienow() {
+    const [movies] = await db.query("SELECT * FROM `movies` where movie_release > 2025-03-10 ORDER BY `movies`.`movie_release` DESC");
+    if (movies.length === 0) return { status: 404, message: "Not Have movies now" };
+    return { status: 200, message: movies };
   }
 
 
@@ -392,15 +483,61 @@ class AdminModel {
 
   // danh sach phim
 
-  static async GetListMovies(limit) {
+  static async GetAllMovies (limit) {
     try {
-      const [movies] = await db.query("select * from movies limit ?", [limit || 5]);
+      const [movies] = await db.query(
+        `
+        SELECT 
+          movie_id,
+          movie_name,
+          movie_description,
+          movie_trailer,
+          movie_cens,
+          movie_genres,
+          movie_release,
+          movie_length,
+          movie_format,
+          movie_poster
+        FROM movies
+        LIMIT ?
+        `,
+        [limit || 5]
+      );
       return { status: 200, find: movies.length, message: movies };
     } catch (e) {
-      return {
-        status: 500,
-        message: "Error db: " + e
-      };
+      return { status: 500, message: "Error db: " + e };
+    }
+  }
+  static async GetListMovies({ cinema_id, schedule_date, limit = 5 }) {
+    try {
+      const [movies] = await db.query(
+        `
+        SELECT DISTINCT 
+          m.movie_id,
+          m.movie_name,
+          m.movie_description,
+          m.movie_trailer,
+          m.movie_cens,
+          m.movie_genres,
+          m.movie_release,
+          m.movie_length,
+          m.movie_format,
+          m.movie_poster
+        FROM movies m
+        JOIN schedule s ON m.movie_id = s.movie_id
+        JOIN room r ON s.room_id = r.room_id
+        WHERE r.cinema_id = ?
+        AND s.schedule_date = ?
+        LIMIT ?
+        `,
+        [cinema_id, schedule_date, limit]
+      );
+      if (movies.length === 0) {
+        return { status: 404, message: "No movies found for this cinema and date" };
+      }
+      return { status: 200, find: movies.length, message: movies };
+    } catch (e) {
+      return { status: 500, message: "Error db: " + e };
     }
   }
 

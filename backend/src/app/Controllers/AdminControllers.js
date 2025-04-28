@@ -2,18 +2,47 @@ const e = require('express');
 const AdminModel = require('../model/Adminmodels'); // Kiểm tra lại đường dẫn file model
 const mail = require('../modifie/Mail');
 class AdminControllers {
+    async list_movie_now(req, res) {
+        const movies = await AdminModel.list_movienow();
+        if (movies.status == 200) return res.status(200).json({ movies })
+        else if (movies.status == 404) return res.status(404).json({ movies })
+    }
+
+
+
+
     // danh sach phim dua vao limit mac dinh la 5
     async ListMovies(req, res) {
-        const { limit } = req.body;
-        const movies = await AdminModel.GetListMovies(limit);
+        const { cinema_id, schedule_date, limit } = req.body;
+        if (!cinema_id || !schedule_date) {
+          return res.json({
+            movies: { status: 400, message: "Missing cinema_id or schedule_date" },
+          });
+        }
+        const movies = await AdminModel.GetListMovies({ cinema_id, schedule_date, limit });
         return res.json({ movies });
-    }
+      }
+    async ListAllMovies(req, res) {
+        const { limit } = req.body;
+        if (limit && (!Number.isInteger(limit) || limit < 1)) {
+          return res.json({
+            movies: { status: 400, message: "Limit must be a positive integer" },
+          });
+        }
+        const movies = await AdminModel.GetAllMovies(limit);
+        return res.json({ movies });
+      }
     // rap chieu phim
+    //them phim
     async Add_Movie(req, res) {
         const movie = await AdminModel.fetchMovies();
         return res.json({ movie })
     }
-
+    //them phim sap chieu
+    async Add_Movie_commingup(req, res) {
+        const movie = await AdminModel.fetchMoviesComming();
+        return res.json({ movie })
+    }
     // rap chieu phim
     async SearchCinemas(req, res) {
         const { cinema_name } = req.body;
@@ -121,7 +150,7 @@ class AdminControllers {
 
     async Room_showtime(req, res) {
         const { cinema_id } = req.body;
-        if (!cinema_id ) return res.json({ status: 400, message: "Missing Required!" });
+        if (!cinema_id) return res.json({ status: 400, message: "Missing Required!" });
         const rooms = await AdminModel.Room_showtime(cinema_id);
         return res.json({ rooms });
     }

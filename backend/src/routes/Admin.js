@@ -7,6 +7,9 @@ router.get("/add_movies", Admincontrolers.Add_Movie);
 router.post("/search/cinemas", Admincontrolers.SearchCinemas);
 router.post("/search/cinemas-district", Admincontrolers.SearchCinemasBydistrict);
 
+router.get('/list-movie/now', Admincontrolers.list_movie_now);
+router.get('/add_movies/comming-up', Admincontrolers.Add_Movie_commingup);
+
 //phan dat ve
 //chon rap sau khi chon phim
 router.post("/cinemas-movies", Admincontrolers.List_cinemas_by_movie);
@@ -31,4 +34,5 @@ router.delete('/delete/schedule', Admincontrolers.deleteSchedule);
 
 
 router.post("/list-movies", Admincontrolers.ListMovies);
+router.post('/list-all-movies',Admincontrolers.ListAllMovies);
 module.exports = router;

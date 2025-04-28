@@ -1,0 +1,156 @@
+/* Nền Galaxy */
+.bg-galaxy {
+    background: linear-gradient(180deg, #1B0A2A 0%, #0D1B3E 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .bg-galaxy::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at 20% 30%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 1%
+      ),
+      radial-gradient(
+        circle at 80% 70%,
+        rgba(255, 255, 255, 0.15) 0%,
+        transparent 1%
+      ),
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 1%
+      );
+    pointer-events: none;
+  }
+  
+  /* Tabs */
+  .tab-active {
+    color: #FFD700 !important;
+    position: relative;
+  }
+  
+  .tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #FFD700, #F28C38);
+  }
+  
+  .tab-inactive {
+    color: #D1D5DB;
+  }
+  
+  .tab-inactive:hover {
+    color: #FFFFFF;
+  }
+  
+  /* Slide Item */
+  .slide-item {
+    border: 1px solid transparent;
+    background: linear-gradient(#0D1B3E, #0D1B3E) padding-box,
+      linear-gradient(45deg, #F28C38, #FFD700) border-box;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .slide-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  }
+  
+  /* Movie Card */
+  .movie-card {
+    background: #0D1B3E;
+    border: 1px solid transparent;
+    background: linear-gradient(#0D1B3E, #0D1B3E) padding-box,
+      linear-gradient(45deg, #F28C38, #FFD700) border-box;
+    border-radius: 16px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+  
+  .movie-button {
+    background: linear-gradient(90deg, #F28C38, #FFD700);
+    color: #1B0A2A;
+    font-weight: bold;
+  }
+  
+  .movie-button:hover {
+    background: linear-gradient(90deg, #FFD700, #F28C38);
+  }
+  
+  /* Promo Card */
+  .promo-card {
+    background: #0D1B3E;
+    border: 1px solid transparent;
+    background: linear-gradient(#0D1B3E, #0D1B3E) padding-box,
+      linear-gradient(45deg, #F28C38, #FFD700) border-box;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .promo-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  }
+  
+  /* Quick Booking Button */
+  .quick-booking-button {
+    background: linear-gradient(90deg, #F28C38, #FFD700);
+    color: #1B0A2A;
+    font-weight: bold;
+    padding: 12px 32px;
+    border-radius: 8px;
+  }
+  
+  .quick-booking-button:hover {
+    background: linear-gradient(90deg, #FFD700, #F28C38);
+  }
+  
+  .quick-booking-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Scrollbar ẩn */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .no-scrollbar > div {
+    scroll-snap-align: start;
+  }
+  
+  /* Hiệu ứng twinkle cho loading */
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+  
+  .animate-twinkle {
+    animation: twinkle 1.5s infinite;
+  }
