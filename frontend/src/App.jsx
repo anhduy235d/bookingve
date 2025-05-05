@@ -16,10 +16,8 @@ import News from "./pages/News";
 import BookingFlow from "./components/BookingFlow";
 import Payment from "./components/Payment";
 import Ticket from "./components/Ticket";
-
-
-
-
+import AccountManagement from "./components/AccountManagement";
+import BookingHistory from "./components/BookingHistory";
 
 export default function App() {
   // State quản lý modal
@@ -66,6 +64,8 @@ export default function App() {
           <Route path="/movies/now" element={<MoviesNow />} />
           <Route path="/movies/soon" element={<MoviesSoon />} />
           <Route path="/news" element={<News />} />
+          <Route path="/profile" element={<AccountManagement />} />
+          <Route path="/booking-history" element={<BookingHistory />} />
         </Routes>
       </main>
 

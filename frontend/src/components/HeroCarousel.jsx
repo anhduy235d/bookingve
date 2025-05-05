@@ -6,7 +6,7 @@ import "swiper/css";
 const slides = [
   {
     title: "Avengers: Endgame",
-    image: "https://i.imgur.com/MK3eW3As.jpg", // thay bằng poster thật nếu có
+    image: "https://i.imgur.com/MK3eW3As.jpg",
     description: "Trận chiến cuối cùng của các siêu anh hùng.",
   },
   {

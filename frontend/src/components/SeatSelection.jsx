@@ -19,7 +19,11 @@ const SeatSelection = ({ selectedSeats, setSelectedSeats, onNext }) => {
           <button
             key={i}
             className={`p-2 border rounded w-10 h-10 text-sm font-medium transition
-              ${selectedSeats.includes(i) ? "bg-green-500 text-white" : "hover:bg-gray-200"}`}
+              ${
+                selectedSeats.includes(i)
+                  ? "bg-green-500 text-white"
+                  : "hover:bg-gray-200"
+              }`}
             onClick={() => handleSeatToggle(i)}
           >
             {i + 1}

@@ -33,7 +33,7 @@
   width: 100px; /* Kích thước cố định để logo hiển thị đồng đều */
   height: 48px;
   border-radius: 5px;
-  object-fit: cover; /* Đảm bảo logo lấp đầy khung mà không méo */
+  object-fit: cover; /* Đảm bảo logo lấp đầy khung mà không méo */ 
   border: 2px solid transparent; /* Viền gradient */
   background: linear-gradient(#0D1B3E, #0D1B3E) padding-box,
               linear-gradient(45deg, #F28C38, #FFD700) border-box;
